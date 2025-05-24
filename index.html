@@ -85,7 +85,7 @@
     <label for="pyeong">📏 평수 입력</label>
     <input type="number" id="pyeong" placeholder="예: 30" min="0" />
 
-    <label for="roomCount">🛏 방 개수 입력 (계산에는 영향 없음)</label>
+    <label for="roomCount">🛏 방 개수 입력 (계산에는 반영되지 않음)</label>
     <input type="number" id="roomCount" placeholder="예: 3" min="0" />
 
     <label for="paperType">🧻 도배지 종류 선택</label>
@@ -137,6 +137,9 @@
     <label>🧾 총 견적 (원)</label>
     <input type="number" id="totalEstimate" placeholder="원" readonly />
 
+    <label>🧮 시공비 추정 (원)</label>
+    <input type="number" id="constructionEstimate" placeholder="원" readonly />
+
     <div class="footer">ⓒ 2025 계산 도우미</div>
   </div>
 
@@ -167,9 +170,9 @@
         materialUnitCost = 45000;
         baseWorkload = 9;
       } else if (paperType === "mixed") {
-        // 고정 비율: 방(합지) 60%, 주방+거실(실크) 40%
-        materialUnitCost = Math.round(25000 * 0.6 + 45000 * 0.4);
-        baseWorkload = 12 * 0.6 + 9 * 0.4;
+        // 혼합의 경우 방 비율은 무시하고 단순 평균 적용
+        materialUnitCost = 34000;
+        baseWorkload = 10.5;
       }
 
       const actualWorkload = baseWorkload * efficiency;
@@ -181,6 +184,17 @@
       const extraTotal = Math.round(materialTotal * extraPercent) + mealCost;
       const totalEstimate = materialTotal + laborTotal + extraTotal;
 
+      // 시공비 추정
+      let unitPrice = 0;
+      if (paperType === "hapji") {
+        unitPrice = 50000;
+      } else if (paperType === "silk") {
+        unitPrice = 80000;
+      } else if (paperType === "mixed") {
+        unitPrice = 60000;
+      }
+      const constructionEstimate = Math.round(pyeong * unitPrice);
+
       document.getElementById("areaM2").value = Math.round(areaM2);
       document.getElementById("areaPyeong").value = areaPyeong.toFixed(1);
       document.getElementById("workers").value = workers;
@@ -188,6 +202,7 @@
       document.getElementById("laborTotal").value = laborTotal;
       document.getElementById("extraTotal").value = extraTotal;
       document.getElementById("totalEstimate").value = totalEstimate;
+      document.getElementById("constructionEstimate").value = constructionEstimate;
     }
   </script>
 </body>
